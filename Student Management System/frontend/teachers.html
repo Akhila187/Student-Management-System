@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Faculty Records</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      .faculty-page {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+
+      .faculty-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 30px 0 20px;
+      }
+
+      .faculty-actions h2 {
+        margin: 0;
+      }
+
+      .add-btn {
+        background: #7c3aed;
+        color: white;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .add-btn:hover {
+        background: #6d28d9;
+      }
+
+      .faculty-form {
+        display: none;
+        background: #111827;
+        border: 1px solid #7c3aed;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 25px;
+      }
+
+      .faculty-form h2 {
+        color: white;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        color: #c4b5fd;
+        margin-bottom: 7px;
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 10px;
+        border-radius: 7px;
+        border: 1px solid #374151;
+        background: #1f2937;
+        color: white;
+        outline: none;
+      }
+
+      .form-buttons {
+        margin-top: 20px;
+      }
+
+      .save-btn,
+      .cancel-btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        color: white;
+        margin-right: 8px;
+      }
+
+      .save-btn {
+        background: #16a34a;
+      }
+
+      .cancel-btn {
+        background: #6b7280;
+      }
+
+      .faculty-table-box {
+        background: #111827;
+        border: 1px solid #374151;
+        border-radius: 14px;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #374151;
+      }
+
+      th {
+        color: #c4b5fd;
+        background: #17112b;
+      }
+
+      td {
+        color: white;
+      }
+
+      .status {
+        color: #4ade80;
+        font-weight: 500;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        margin-right: 5px;
+      }
+
+      .edit-btn {
+        background: #2563eb;
+      }
+
+      .delete-btn {
+        background: #dc2626;
+      }
+
+      .back-btn {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 10px 20px;
+        background: #7c3aed;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+      }
+
+      @media (max-width: 700px) {
+        .faculty-actions {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Faculty Records</h1>
+
+      <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="students.html">Students</a>
+        <a href="attendance.html">Attendance</a>
+        <a href="marks.html">Marks</a>
+      </nav>
+    </header>
+
+    <main class="faculty-page">
+      <section class="welcome">
+        <h2>Faculty Records</h2>
+        <p>View and manage faculty information and records.</p>
+      </section>
+
+      <section class="faculty-actions">
+        <h2>Faculty Information</h2>
+
+        <button class="add-btn" onclick="showForm()">+ Add Faculty</button>
+      </section>
+
+      <!-- ADD / EDIT FORM -->
+
+      <section class="faculty-form" id="facultyForm">
+        <h2 id="formTitle">Add Faculty</h2>
+
+        <form onsubmit="saveFaculty(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Faculty ID</label>
+              <input
+                type="text"
+                id="facultyId"
+                placeholder="Example: F004"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Faculty Name</label>
+              <input
+                type="text"
+                id="facultyName"
+                placeholder="Enter faculty name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Department</label>
+              <input
+                type="text"
+                id="department"
+                placeholder="Example: Computer Science"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                id="facultyEmail"
+                placeholder="Enter email"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Status</label>
+
+              <select id="facultyStatus">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="save-btn">Save Faculty</button>
+
+            <button type="button" class="cancel-btn" onclick="hideForm()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- FACULTY TABLE -->
+
+      <section class="faculty-table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Faculty Name</th>
+              <th>Department</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="facultyTableBody">
+            <tr>
+              <td colspan="6">Loading faculty...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <a href="index.html" class="back-btn"> ← Back to Dashboard </a>
+    </main>
+
+    <footer>
+      <p>Student Management System</p>
+    </footer>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000";
+
+      let editingId = null;
+      let facultyRecords = [];
+
+      function showForm() {
+        document.getElementById("facultyForm").style.display = "block";
+
+        document.getElementById("formTitle").textContent = "Add Faculty";
+
+        clearForm();
+
+        editingId = null;
+      }
+
+      function hideForm() {
+        document.getElementById("facultyForm").style.display = "none";
+
+        clearForm();
+
+        editingId = null;
+      }
+
+      function clearForm() {
+        document.getElementById("facultyId").value = "";
+        document.getElementById("facultyName").value = "";
+        document.getElementById("department").value = "";
+        document.getElementById("facultyEmail").value = "";
+        document.getElementById("facultyStatus").value = "Active";
+      }
+
+      async function loadFaculty() {
+        const tableBody = document.getElementById("facultyTableBody");
+
+        try {
+          const response = await fetch(API_URL + "/api/faculty/");
+
+          if (!response.ok) {
+            throw new Error("Failed to load faculty");
+          }
+
+          facultyRecords = await response.json();
+
+          if (facultyRecords.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="6">No faculty records found.</td></tr>';
+            return;
+          }
+
+          tableBody.innerHTML = facultyRecords
+            .map(
+              (f) => `
+              <tr>
+                <td>${f.faculty_code || f.id}</td>
+                <td>${f.name}</td>
+                <td>${f.department}</td>
+                <td>${f.email}</td>
+                <td class="${f.status === "Active" ? "status" : ""}">${f.status}</td>
+                <td>
+                  <button class="edit-btn" onclick="editFaculty(${f.id})">Edit</button>
+                  <button class="delete-btn" onclick="deleteFaculty(${f.id})">Delete</button>
+                </td>
+              </tr>
+            `,
+            )
+            .join("");
+        } catch (error) {
+          console.error("Load faculty error:", error);
+
+          tableBody.innerHTML =
+            '<tr><td colspan="6">Failed to load faculty records.</td></tr>';
+        }
+      }
+
+      async function saveFaculty(event) {
+        event.preventDefault();
+
+        const payload = {
+          faculty_code: document.getElementById("facultyId").value,
+          name: document.getElementById("facultyName").value,
+          department: document.getElementById("department").value,
+          email: document.getElementById("facultyEmail").value,
+          status: document.getElementById("facultyStatus").value,
+        };
+
+        try {
+          let response;
+
+          if (editingId) {
+            response = await fetch(`${API_URL}/api/faculty/${editingId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          } else {
+            response = await fetch(`${API_URL}/api/faculty/`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Failed to save faculty");
+          }
+
+          alert(
+            editingId
+              ? "Faculty updated successfully!"
+              : "Faculty added successfully!",
+          );
+
+          hideForm();
+          loadFaculty();
+          if (typeof loadTeacherCount === "function") {
+            loadTeacherCount();
+          }
+        } catch (error) {
+          console.error("Save faculty error:", error);
+          alert("Failed to save faculty. Please try again.");
+        }
+      }
+
+      function editFaculty(id) {
+        const faculty = facultyRecords.find((f) => f.id === id);
+
+        if (!faculty) {
+          return;
+        }
+
+        editingId = id;
+
+        document.getElementById("facultyForm").style.display = "block";
+        document.getElementById("formTitle").textContent = "Edit Faculty";
+
+        document.getElementById("facultyId").value = faculty.faculty_code || "";
+        document.getElementById("facultyName").value = faculty.name;
+        document.getElementById("department").value = faculty.department;
+        document.getElementById("facultyEmail").value = faculty.email;
+        document.getElementById("facultyStatus").value = faculty.status;
+      }
+
+      async function deleteFaculty(id) {
+        const faculty = facultyRecords.find((f) => f.id === id);
+
+        const confirmDelete = confirm(
+          "Are you sure you want to delete " +
+            (faculty ? faculty.name : "this faculty member") +
+            "?",
+        );
+
+        if (!confirmDelete) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/api/faculty/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete faculty");
+          }
+
+          alert("Faculty deleted successfully!");
+          loadFaculty();
+          if (typeof loadTeacherCount === "function") {
+            loadTeacherCount();
+          }
+        } catch (error) {
+          console.error("Delete faculty error:", error);
+          alert("Failed to delete faculty. Please try again.");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadFaculty);
+    </script>
+  </body>
+</html>

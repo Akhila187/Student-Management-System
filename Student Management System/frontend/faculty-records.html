@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Faculty Records | Student Management System</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Student Management System</h1>
+
+      <nav>
+        <a href="faculty-dashboard.html">🏠 Dashboard</a>
+
+        <a href="my-students.html">👨‍🎓 Students</a>
+
+        <a href="attendance.html">📋 Attendance</a>
+
+        <a href="marks.html">📊 Marks</a>
+
+        <a href="profile.html">👤 Profile</a>
+
+        <a
+          href="login.html"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- PAGE HEADING -->
+
+      <section class="welcome">
+        <h2>Faculty Records</h2>
+
+        <p>View registered faculty information and records.</p>
+      </section>
+
+      <!-- FACULTY RECORDS -->
+
+      <section class="quick-actions">
+        <h2>Faculty Records</h2>
+
+        <div id="facultyList">
+          <p>Loading faculty records...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Student Management System</p>
+    </footer>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000";
+
+      // =====================================
+      // LOAD FACULTY FROM DATABASE
+      // =====================================
+
+      async function loadFaculty() {
+        const facultyList = document.getElementById("facultyList");
+
+        try {
+          const response = await fetch(API_URL + "/api/faculty/");
+
+          if (!response.ok) {
+            throw new Error("Failed to load faculty records");
+          }
+
+          const faculty = await response.json();
+
+          displayFaculty(faculty);
+        } catch (error) {
+          console.error(error);
+
+          facultyList.innerHTML = "<p>Unable to load faculty records.</p>";
+        }
+      }
+
+      // =====================================
+      // DISPLAY FACULTY
+      // =====================================
+
+      function displayFaculty(faculty) {
+        const facultyList = document.getElementById("facultyList");
+
+        if (!faculty || faculty.length === 0) {
+          facultyList.innerHTML = "<p>No faculty records found.</p>";
+
+          return;
+        }
+
+        let html = `
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>Faculty ID</th>
+
+                <th>Faculty Name</th>
+
+                <th>Department</th>
+
+                <th>Email</th>
+
+                <th>Designation</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+        `;
+
+        faculty.forEach((member) => {
+          html += `
+
+            <tr>
+
+              <td>
+                ${member.id ?? ""}
+              </td>
+
+              <td>
+                ${member.name ?? ""}
+              </td>
+
+              <td>
+                ${member.department ?? ""}
+              </td>
+
+              <td>
+                ${member.email ?? ""}
+              </td>
+
+              <td>
+                ${member.designation ?? ""}
+              </td>
+
+            </tr>
+
+          `;
+        });
+
+        html += `
+
+            </tbody>
+
+          </table>
+
+        `;
+
+        facultyList.innerHTML = html;
+      }
+
+      // =====================================
+      // LOGOUT
+      // =====================================
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+
+        localStorage.removeItem("userRole");
+
+        localStorage.removeItem("username");
+
+        localStorage.removeItem("facultyName");
+
+        localStorage.removeItem("userEmail");
+
+        localStorage.removeItem("adminName");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      // =====================================
+      // LOAD DATA WHEN PAGE OPENS
+      // =====================================
+
+      document.addEventListener("DOMContentLoaded", loadFaculty);
+    </script>
+  </body>
+</html>

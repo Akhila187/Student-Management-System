@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login | Student Management System</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0f1020;
+        color: #f5f3ff;
+        font-family: Arial, sans-serif;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 430px;
+        padding: 20px;
+      }
+
+      .login-box {
+        background: #18192d;
+        border: 1px solid #7c3aed;
+        border-radius: 18px;
+        padding: 38px;
+
+        box-shadow:
+          0 0 25px rgba(124, 58, 237, 0.25),
+          0 15px 45px rgba(0, 0, 0, 0.45);
+      }
+
+      .login-box h1 {
+        text-align: center;
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 30px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #a78bfa;
+        margin: 0 0 30px;
+        font-size: 14px;
+      }
+
+      label {
+        display: block;
+        margin-top: 17px;
+        margin-bottom: 8px;
+        color: #ddd6fe;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 13px 14px;
+
+        border: 1px solid #383957;
+        border-radius: 9px;
+
+        background: #111222;
+        color: #ffffff;
+
+        outline: none;
+        font-size: 14px;
+      }
+
+      input::placeholder {
+        color: #777892;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #8b5cf6;
+
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+      }
+
+      select option {
+        background: #18192d;
+        color: white;
+      }
+
+      /* PASSWORD */
+
+      .password-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .password-wrapper input {
+        padding-right: 45px;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        color: #a78bfa;
+        cursor: pointer;
+
+        font-size: 15px;
+      }
+
+      .toggle-password:hover {
+        color: #c4b5fd;
+      }
+
+      /* BUTTON */
+
+      .login-button {
+        width: 100%;
+
+        margin-top: 27px;
+        padding: 13px;
+
+        border: none;
+        border-radius: 9px;
+
+        background: linear-gradient(90deg, #8b5cf6, #c084fc);
+
+        color: white;
+
+        font-size: 16px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+      }
+
+      .login-button:hover {
+        background: linear-gradient(90deg, #7c3aed, #a855f7);
+
+        transform: translateY(-1px);
+
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.25);
+      }
+
+      #loginMessage {
+        text-align: center;
+        margin-top: 15px;
+
+        min-height: 20px;
+
+        font-size: 14px;
+      }
+
+      .login-footer {
+        text-align: center;
+
+        margin-top: 27px;
+
+        color: #777892;
+
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <div class="login-box">
+        <h1>Login</h1>
+
+        <p class="subtitle">Student Management System</p>
+
+        <form id="loginForm">
+          <!-- ROLE -->
+
+          <label for="role"> Login As </label>
+
+          <select id="role" required>
+            <option value="">Select Role</option>
+
+            <option value="admin">Admin</option>
+
+            <option value="faculty">Faculty</option>
+          </select>
+
+          <!-- USERNAME -->
+
+          <label for="username"> Username / Email </label>
+
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter username or email"
+            required
+          />
+
+          <!-- PASSWORD -->
+
+          <label for="password"> Password </label>
+
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              required
+            />
+
+            <span
+              id="togglePassword"
+              class="toggle-password"
+              title="Show password"
+            >
+              ◉
+            </span>
+          </div>
+
+          <!-- LOGIN -->
+
+          <button type="submit" class="login-button">Login</button>
+
+          <p id="loginMessage"></p>
+        </form>
+
+        <div class="login-footer">© 2026 Student Management System</div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000";
+
+      /* =========================
+         SHOW / HIDE PASSWORD
+      ========================== */
+
+      document
+        .getElementById("togglePassword")
+        .addEventListener("click", function () {
+          const password = document.getElementById("password");
+
+          if (password.type === "password") {
+            password.type = "text";
+
+            this.textContent = "●";
+
+            this.title = "Hide password";
+          } else {
+            password.type = "password";
+
+            this.textContent = "◉";
+
+            this.title = "Show password";
+          }
+        });
+
+      /* =========================
+         LOGIN
+      ========================== */
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const role = document
+            .getElementById("role")
+            .value.trim()
+            .toLowerCase();
+
+          const username = document.getElementById("username").value.trim();
+
+          const password = document.getElementById("password").value;
+
+          const message = document.getElementById("loginMessage");
+
+          /* ROLE CHECK */
+
+          if (role !== "admin" && role !== "faculty") {
+            message.textContent = "Please select Admin or Faculty.";
+
+            message.style.color = "#ef4444";
+
+            return;
+          }
+
+          message.textContent = "Logging in...";
+          message.style.color = "#a78bfa";
+
+          try {
+            /* =========================
+               SEND LOGIN REQUEST
+            ========================== */
+
+            const response = await fetch(API_URL + "/api/auth/login", {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                username: username,
+                password: password,
+                role: role,
+              }),
+            });
+
+            const data = await response.json();
+
+            /* =========================
+               LOGIN FAILED
+            ========================== */
+
+            if (!response.ok) {
+              message.textContent =
+                data.message || "Invalid username or password.";
+
+              message.style.color = "#ef4444";
+
+              return;
+            }
+
+            /* =========================
+               VERIFY ROLE FROM SERVER
+            ========================== */
+
+            const loggedInRole = String(data.role || "")
+              .trim()
+              .toLowerCase();
+
+            if (loggedInRole !== "admin" && loggedInRole !== "faculty") {
+              message.textContent = "Invalid user role received from server.";
+
+              message.style.color = "#ef4444";
+
+              return;
+            }
+
+            /* =========================
+               CLEAR OLD LOGIN DATA
+            ========================== */
+
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("username");
+            localStorage.removeItem("facultyName");
+            localStorage.removeItem("userEmail");
+            localStorage.removeItem("adminName");
+            localStorage.removeItem("user");
+
+            /* =========================
+               SAVE NEW LOGIN DATA
+            ========================== */
+
+            localStorage.setItem("isLoggedIn", "true");
+
+            localStorage.setItem("userRole", loggedInRole);
+
+            localStorage.setItem("username", data.username || username);
+
+            localStorage.setItem("userEmail", data.email || "");
+
+            localStorage.setItem("user", JSON.stringify(data));
+
+            /* =========================
+               SAVE ROLE-SPECIFIC NAME
+            ========================== */
+
+            if (loggedInRole === "faculty") {
+              localStorage.setItem("facultyName", data.username || username);
+            }
+
+            if (loggedInRole === "admin") {
+              localStorage.setItem("adminName", data.username || username);
+            }
+
+            /* =========================
+               SUCCESS
+            ========================== */
+
+            message.textContent = "Login successful!";
+
+            message.style.color = "#10b981";
+
+            /* =========================
+               ROLE-BASED REDIRECT
+            ========================== */
+
+            setTimeout(function () {
+              if (loggedInRole === "admin") {
+                window.location.replace("index.html");
+              } else {
+                window.location.replace("faculty-dashboard.html");
+              }
+            }, 500);
+          } catch (error) {
+            console.error("Login error:", error);
+
+            message.textContent = "Unable to connect to server.";
+
+            message.style.color = "#ef4444";
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Attendance | Student Management System</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      .attendance-form,
+      .records-section {
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 25px;
+      }
+
+      .attendance-form h2,
+      .records-section h2 {
+        color: #c084fc;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        align-items: end;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .form-group label {
+        color: #ddd;
+        font-weight: 600;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100% !important;
+        height: 46px !important;
+        min-height: 46px !important;
+        max-height: 46px !important;
+        box-sizing: border-box !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        border: 1px solid #34354d !important;
+        background: #0f1020 !important;
+        color: white !important;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: #8b5cf6 !important;
+      }
+
+      .attendance-button-wrapper {
+        display: block;
+        width: 150px;
+        margin-top: 45px;
+      }
+
+      .attendance-btn {
+        display: block !important;
+        width: 150px !important;
+        min-width: 150px !important;
+        max-width: 150px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        border: none !important;
+        border-radius: 6px !important;
+        background: #7c3aed !important;
+        color: white !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        line-height: 38px !important;
+        text-align: center !important;
+        cursor: pointer !important;
+      }
+
+      .attendance-btn:hover {
+        background: #8b5cf6 !important;
+      }
+
+      .message {
+        margin-top: 15px;
+        font-weight: 600;
+      }
+
+      .admin-view-message {
+        display: none;
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 25px;
+        color: #c084fc;
+        font-weight: 600;
+      }
+
+      .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .attendance-table th,
+      .attendance-table td {
+        padding: 13px;
+        text-align: left;
+        border-bottom: 1px solid #34354d;
+      }
+
+      .attendance-table th {
+        color: #c084fc;
+      }
+
+      .attendance-table td {
+        color: #e5e5e5;
+      }
+
+      .present {
+        color: #86efac !important;
+        font-weight: 600;
+      }
+
+      .absent {
+        color: #fca5a5 !important;
+        font-weight: 600;
+      }
+
+      @media (max-width: 800px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .attendance-button-wrapper {
+          width: 150px;
+          margin-top: 45px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Student Management System</h1>
+
+      <nav>
+        <a href="index.html" id="dashboardLink">🏠 Dashboard</a>
+
+        <a href="my-students.html">👨‍🎓 Students</a>
+
+        <a href="attendance.html" class="active">📋 Attendance</a>
+
+        <a href="marks.html">📊 Marks</a>
+
+        <a href="profile.html">👤 Profile</a>
+
+        <a
+          href="login.html"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="welcome">
+        <h2>Attendance Monitor</h2>
+        <p id="pageDescription">Manage student attendance records.</p>
+      </section>
+
+      <!-- ADMIN VIEW ONLY MESSAGE -->
+
+      <div id="adminViewMessage" class="admin-view-message">
+        Admin View Only — Attendance records can be viewed but cannot be added
+        or modified.
+      </div>
+
+      <!-- FACULTY ONLY: MARK ATTENDANCE -->
+
+      <section
+        class="attendance-form"
+        id="attendanceFormSection"
+        style="display: none"
+      >
+        <h2>Mark Attendance</h2>
+
+        <form id="attendanceForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="student">Student</label>
+
+              <select id="student" required>
+                <option value="">Select Student</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="date">Date</label>
+
+              <input type="date" id="date" required />
+            </div>
+
+            <div class="form-group">
+              <label for="status">Attendance Status</label>
+
+              <select id="status" required>
+                <option value="">Select Status</option>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="attendance-button-wrapper">
+            <button type="submit" class="attendance-btn">
+              Mark Attendance
+            </button>
+          </div>
+
+          <div id="message" class="message"></div>
+        </form>
+      </section>
+
+      <!-- ATTENDANCE RECORDS -->
+
+      <section class="records-section">
+        <h2>Attendance Records</h2>
+
+        <div id="attendanceList">
+          <p>Loading attendance records...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Student Management System</p>
+    </footer>
+
+    <script>
+      const STUDENTS_API = "http://127.0.0.1:5000/api/students/";
+
+      const ATTENDANCE_API = "http://127.0.0.1:5000/api/attendance/";
+
+      /* ========================================
+         GET LOGGED-IN USER
+      ======================================== */
+
+      function getLoggedInUser() {
+        try {
+          return JSON.parse(localStorage.getItem("user") || "null");
+        } catch (error) {
+          return null;
+        }
+      }
+
+      const currentUser = getLoggedInUser();
+
+      const currentRole = String(
+        (currentUser && currentUser.role) ||
+          localStorage.getItem("userRole") ||
+          "",
+      )
+        .trim()
+        .toLowerCase();
+
+      const isAdmin = currentRole === "admin";
+
+      const isFaculty = currentRole === "faculty";
+
+      /* ========================================
+         DASHBOARD NAVIGATION
+      ======================================== */
+
+      const dashboardLink = document.getElementById("dashboardLink");
+
+      if (dashboardLink) {
+        if (isAdmin) {
+          dashboardLink.href = "index.html";
+        } else if (isFaculty) {
+          dashboardLink.href = "faculty-dashboard.html";
+        } else {
+          dashboardLink.href = "login.html";
+        }
+      }
+
+      /* ========================================
+         APPLY ROLE VIEW
+      ======================================== */
+
+      function applyRoleView() {
+        const formSection = document.getElementById("attendanceFormSection");
+
+        const adminMessage = document.getElementById("adminViewMessage");
+
+        const pageDescription = document.getElementById("pageDescription");
+
+        /*
+          ADMIN
+          -----
+          VIEW ONLY
+        */
+
+        if (isAdmin) {
+          formSection.style.display = "none";
+
+          adminMessage.style.display = "block";
+
+          pageDescription.textContent = "View student attendance records.";
+
+          return;
+        }
+
+        /*
+          FACULTY
+          -------
+          CAN MANAGE ATTENDANCE
+        */
+
+        if (isFaculty) {
+          formSection.style.display = "block";
+
+          adminMessage.style.display = "none";
+
+          pageDescription.textContent = "Manage student attendance records.";
+
+          return;
+        }
+
+        /*
+          UNKNOWN ROLE
+          ------------
+          SAFETY: HIDE MANAGEMENT FORM
+        */
+
+        formSection.style.display = "none";
+
+        adminMessage.style.display = "none";
+
+        pageDescription.textContent = "View student attendance records.";
+      }
+
+      /* ========================================
+         LOAD STUDENTS
+      ======================================== */
+
+      async function loadStudents() {
+        /*
+          Only Faculty needs the student dropdown.
+        */
+
+        if (!isFaculty) {
+          return;
+        }
+
+        const studentSelect = document.getElementById("student");
+
+        try {
+          const response = await fetch(STUDENTS_API);
+
+          if (!response.ok) {
+            throw new Error("Unable to load students");
+          }
+
+          const students = await response.json();
+
+          studentSelect.innerHTML = '<option value="">Select Student</option>';
+
+          students.forEach((student) => {
+            const option = document.createElement("option");
+
+            option.value = student.id;
+
+            option.textContent = `${student.student_id} - ${student.name}`;
+
+            studentSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Load students error:", error);
+
+          studentSelect.innerHTML =
+            '<option value="">Unable to load students</option>';
+        }
+      }
+
+      /* ========================================
+         LOAD ATTENDANCE
+      ======================================== */
+
+      async function loadAttendance() {
+        const list = document.getElementById("attendanceList");
+
+        try {
+          const response = await fetch(ATTENDANCE_API);
+
+          if (!response.ok) {
+            throw new Error("Unable to load attendance");
+          }
+
+          const records = await response.json();
+
+          if (!Array.isArray(records) || records.length === 0) {
+            list.innerHTML = "<p>No attendance records found.</p>";
+
+            return;
+          }
+
+          let html = `
+            <table class="attendance-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student</th>
+                  <th>Department</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+          `;
+
+          records.forEach((record) => {
+            const statusClass =
+              String(record.status || "").toLowerCase() === "present"
+                ? "present"
+                : "absent";
+
+            html += `
+              <tr>
+                <td>${record.id ?? ""}</td>
+
+                <td>${record.name ?? ""}</td>
+
+                <td>${record.department ?? ""}</td>
+
+                <td>${record.date ?? ""}</td>
+
+                <td class="${statusClass}">
+                  ${record.status ?? ""}
+                </td>
+              </tr>
+            `;
+          });
+
+          html += `
+              </tbody>
+            </table>
+          `;
+
+          list.innerHTML = html;
+        } catch (error) {
+          console.error("Load attendance error:", error);
+
+          list.innerHTML = "<p>Unable to load attendance records.</p>";
+        }
+      }
+
+      /* ========================================
+         MARK ATTENDANCE
+         FACULTY ONLY
+      ======================================== */
+
+      document
+        .getElementById("attendanceForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          /*
+              SECURITY CHECK:
+              Only Faculty can submit attendance.
+            */
+
+          if (!isFaculty) {
+            const message = document.getElementById("message");
+
+            message.textContent = "❌ Admin has view-only access.";
+
+            message.style.color = "#fca5a5";
+
+            return;
+          }
+
+          const studentId = document.getElementById("student").value;
+
+          const date = document.getElementById("date").value;
+
+          const status = document.getElementById("status").value;
+
+          const message = document.getElementById("message");
+
+          try {
+            const response = await fetch(ATTENDANCE_API, {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                student_id: studentId,
+                date: date,
+                status: status,
+              }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.message || "Failed to mark attendance");
+            }
+
+            message.textContent = "✅ Attendance marked successfully.";
+
+            message.style.color = "#86efac";
+
+            document.getElementById("attendanceForm").reset();
+
+            await loadAttendance();
+          } catch (error) {
+            console.error("Mark attendance error:", error);
+
+            message.textContent = "❌ " + error.message;
+
+            message.style.color = "#fca5a5";
+          }
+        });
+
+      /* ========================================
+         LOGOUT
+      ======================================== */
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("username");
+        localStorage.removeItem("facultyName");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("adminName");
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      /* ========================================
+         INITIAL LOAD
+      ======================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        applyRoleView();
+
+        loadStudents();
+
+        loadAttendance();
+      });
+    </script>
+  </body>
+</html>

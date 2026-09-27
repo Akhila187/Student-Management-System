@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Faculty Dashboard | Student Management System</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Student Management System</h1>
+
+      <nav>
+        <a href="faculty-dashboard.html" class="active"> 🏠 Dashboard </a>
+
+        <a href="faculty-students.html"> 👨‍🎓 Students </a>
+
+        <a href="attendance.html"> 📋 Attendance </a>
+
+        <a href="marks.html"> 📊 Marks </a>
+
+        <a href="profile.html"> 👤 Profile </a>
+
+        <a
+          href="#"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- WELCOME -->
+
+      <section class="welcome">
+        <h2>
+          Welcome,
+          <span id="facultyName"> Faculty </span>
+        </h2>
+
+        <p>Manage students, attendance and marks from your faculty panel.</p>
+      </section>
+
+      <!-- SUMMARY -->
+
+      <section class="cards">
+        <div class="card">
+          <h3>Total Students</h3>
+
+          <p id="totalStudents">Loading...</p>
+        </div>
+
+        <div class="card">
+          <h3>Attendance</h3>
+
+          <p>Manage Attendance</p>
+
+          <a href="attendance.html"> Open </a>
+        </div>
+
+        <div class="card">
+          <h3>Marks</h3>
+
+          <p>Manage Marks</p>
+
+          <a href="marks.html"> Open </a>
+        </div>
+
+        <div class="card">
+          <h3>Announcements</h3>
+
+          <p>View Announcements</p>
+        </div>
+      </section>
+
+      <!-- QUICK ACCESS -->
+
+      <section class="quick-actions">
+        <h2>Quick Access</h2>
+
+        <div class="quick-links">
+          <a href="faculty-students.html" class="quick-link">
+            👨‍🎓
+
+            <span> Students </span>
+          </a>
+
+          <a href="attendance.html" class="quick-link">
+            📋
+
+            <span> Attendance </span>
+          </a>
+
+          <a href="marks.html" class="quick-link">
+            📊
+
+            <span> Marks </span>
+          </a>
+
+          <a href="profile.html" class="quick-link">
+            👤
+
+            <span> Profile </span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+
+      <section class="quick-actions">
+        <h2>Announcements</h2>
+
+        <div id="announcements">
+          <p>No announcements available.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Student Management System</p>
+    </footer>
+
+    <script>
+      /* =================================
+   USER INFORMATION
+================================= */
+
+      function getUserData() {
+        const storedUser = localStorage.getItem("user");
+
+        let user = null;
+
+        try {
+          user = storedUser ? JSON.parse(storedUser) : null;
+        } catch (error) {
+          user = null;
+        }
+
+        return user;
+      }
+
+      /* =================================
+   AUTH CHECK
+================================= */
+
+      function checkFacultyLogin() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+        const storedRole = localStorage.getItem("userRole");
+
+        const user = getUserData();
+
+        const actualRole = storedRole || (user && user.role) || "";
+
+        /*
+    Only redirect when the user is
+    genuinely not logged in.
+  */
+
+        if (
+          isLoggedIn !== "true" ||
+          String(actualRole).toLowerCase() !== "faculty"
+        ) {
+          window.location.href = "login.html";
+
+          return false;
+        }
+
+        return true;
+      }
+
+      /* =================================
+   FACULTY NAME
+================================= */
+
+      function loadFacultyName() {
+        const facultyName = document.getElementById("facultyName");
+
+        const user = getUserData();
+
+        const name =
+          localStorage.getItem("facultyName") ||
+          localStorage.getItem("username") ||
+          (user && user.username) ||
+          "Faculty";
+
+        facultyName.textContent = name;
+      }
+
+      /* =================================
+   LOAD STUDENT COUNT
+================================= */
+
+      async function loadStudentCount() {
+        const totalStudents = document.getElementById("totalStudents");
+
+        try {
+          const response = await fetch("http://127.0.0.1:5000/api/students/");
+
+          if (!response.ok) {
+            throw new Error("Unable to load students");
+          }
+
+          const data = await response.json();
+
+          if (Array.isArray(data)) {
+            totalStudents.textContent = data.length;
+          } else {
+            totalStudents.textContent = "0";
+          }
+        } catch (error) {
+          console.error("Student count error:", error);
+
+          totalStudents.textContent = "0";
+        }
+      }
+
+      /* =================================
+   LOGOUT
+================================= */
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+
+        localStorage.removeItem("userRole");
+
+        localStorage.removeItem("username");
+
+        localStorage.removeItem("facultyName");
+
+        localStorage.removeItem("userEmail");
+
+        localStorage.removeItem("adminName");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      /* =================================
+   PAGE LOAD
+================================= */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!checkFacultyLogin()) {
+          return;
+        }
+
+        loadFacultyName();
+
+        loadStudentCount();
+      });
+
+      /* =================================
+   BROWSER BACK/FORWARD HANDLING
+================================= */
+
+      window.addEventListener("pageshow", function (event) {
+        /*
+      When browser restores the dashboard
+      from its cache, check the login state
+      again without changing the page.
+    */
+
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+        const role = localStorage.getItem("userRole");
+
+        if (isLoggedIn === "true" && String(role).toLowerCase() === "faculty") {
+          loadFacultyName();
+        }
+      });
+    </script>
+  </body>
+</html>

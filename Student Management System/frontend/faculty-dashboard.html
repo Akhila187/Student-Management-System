@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Faculty Dashboard | Student Management System</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+
+      .welcome {
+        margin-bottom: 30px;
+      }
+
+      .welcome h2 {
+        margin-bottom: 8px;
+      }
+
+      .welcome p {
+        margin: 0;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 35px;
+      }
+
+      .card {
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 14px;
+        padding: 25px;
+        text-align: center;
+        transition: 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        border-color: #8b5cf6;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
+      }
+
+      .card-icon {
+        font-size: 30px;
+        margin-bottom: 12px;
+      }
+
+      .card h3 {
+        margin: 8px 0;
+        color: #ffffff;
+      }
+
+      .card p {
+        margin: 0;
+        color: #c084fc;
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      .card-action {
+        display: inline-block;
+        margin-top: 5px;
+        color: #c084fc;
+        font-weight: 600;
+        font-size: 18px;
+        text-decoration: none;
+      }
+
+      .card-action:hover {
+        color: #ffffff;
+      }
+
+      .quick-actions {
+        margin-top: 30px;
+        margin-bottom: 30px;
+      }
+
+      .quick-actions h2 {
+        margin-bottom: 20px;
+      }
+
+      .quick-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .quick-link {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 22px;
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 14px;
+        text-decoration: none;
+        color: #ffffff;
+        transition: 0.2s ease;
+      }
+
+      .quick-link:hover {
+        transform: translateY(-3px);
+        border-color: #8b5cf6;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
+      }
+
+      .quick-icon {
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #241b3d;
+        border-radius: 12px;
+        font-size: 25px;
+      }
+
+      .quick-link h3 {
+        margin: 0 0 6px 0;
+        color: #ffffff;
+        font-size: 18px;
+      }
+
+      .quick-link p {
+        margin: 0;
+        color: #b8b8c8;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* Announcements */
+
+      #announcements {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .announcement-item {
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 14px;
+        padding: 20px;
+        transition: 0.2s ease;
+      }
+
+      .announcement-item:hover {
+        border-color: #8b5cf6;
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+      }
+
+      .announcement-title {
+        margin: 0 0 8px 0;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .announcement-message {
+        margin: 0;
+        color: #d0d0dc;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .no-announcements {
+        background: #17182b;
+        border: 1px solid #34354d;
+        border-radius: 14px;
+        padding: 20px;
+        color: #b8b8c8;
+      }
+
+      @media (max-width: 900px) {
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 700px) {
+        main {
+          padding: 20px;
+        }
+
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        .quick-links {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Student Management System</h1>
+
+      <nav>
+        <a href="faculty-dashboard.html" class="active"> 🏠 Dashboard </a>
+
+        <a href="my-students.html"> 👨‍🎓 Students </a>
+
+        <a href="attendance.html"> 📋 Attendance </a>
+
+        <a href="marks.html"> 📊 Marks </a>
+
+        <a href="profile.html"> 👤 Profile </a>
+
+        <a
+          href="login.html"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="welcome">
+        <h2>
+          Welcome,
+          <span id="facultyName">Faculty</span>
+        </h2>
+
+        <p>
+          Manage students, attendance and marks from your faculty dashboard.
+        </p>
+      </section>
+
+      <!-- Dashboard Cards -->
+
+      <section class="cards">
+        <div class="card">
+          <div class="card-icon">👨‍🎓</div>
+
+          <h3>Total Students</h3>
+
+          <p id="totalStudents">0</p>
+        </div>
+
+        <!-- Attendance Manage -->
+
+        <div class="card">
+          <div class="card-icon">📋</div>
+
+          <h3>Attendance</h3>
+
+          <a href="attendance.html" class="card-action"> Manage </a>
+        </div>
+
+        <!-- Marks Manage -->
+
+        <div class="card">
+          <div class="card-icon">📊</div>
+
+          <h3>Marks</h3>
+
+          <a href="marks.html" class="card-action"> Manage </a>
+        </div>
+
+        <!-- Announcements View -->
+
+        <div class="card">
+          <div class="card-icon">📢</div>
+
+          <h3>Announcements</h3>
+
+          <a href="#announcement-section" class="card-action"> View </a>
+        </div>
+      </section>
+
+      <!-- Quick Access -->
+
+      <section class="quick-actions">
+        <h2>Quick Access</h2>
+
+        <div class="quick-links">
+          <a href="my-students.html" class="quick-link">
+            <div class="quick-icon">👨‍🎓</div>
+
+            <div>
+              <h3>Students</h3>
+
+              <p>View and manage student information</p>
+            </div>
+          </a>
+
+          <a href="attendance.html" class="quick-link">
+            <div class="quick-icon">📋</div>
+
+            <div>
+              <h3>Attendance</h3>
+
+              <p>Manage student attendance records</p>
+            </div>
+          </a>
+
+          <a href="marks.html" class="quick-link">
+            <div class="quick-icon">📊</div>
+
+            <div>
+              <h3>Marks</h3>
+
+              <p>Enter and manage student marks</p>
+            </div>
+          </a>
+
+          <a href="profile.html" class="quick-link">
+            <div class="quick-icon">👤</div>
+
+            <div>
+              <h3>Profile</h3>
+
+              <p>View your faculty profile</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Announcements -->
+
+      <section class="quick-actions" id="announcement-section">
+        <h2>📢 Announcements</h2>
+
+        <div id="announcements">
+          <div class="no-announcements">No announcements available.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Student Management System</p>
+    </footer>
+
+    <script>
+      /* ===============================
+         ROLE CHECK
+      =============================== */
+
+      function getUserData() {
+        const storedUser = localStorage.getItem("user");
+
+        try {
+          return storedUser ? JSON.parse(storedUser) : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      const user = getUserData();
+
+      const currentRole = String(
+        (user && user.role) || localStorage.getItem("userRole") || "",
+      )
+        .trim()
+        .toLowerCase();
+
+      /*
+        Faculty Dashboard is only for Faculty.
+
+        Admin -> Admin Dashboard
+        Unknown -> Login
+      */
+
+      if (currentRole === "admin") {
+        window.location.replace("index.html");
+      } else if (currentRole !== "faculty") {
+        window.location.replace("login.html");
+      }
+
+      /* ===============================
+         FACULTY NAME
+      =============================== */
+
+      function loadFacultyName() {
+        const facultyName = document.getElementById("facultyName");
+
+        const currentUser = getUserData();
+
+        const name =
+          localStorage.getItem("facultyName") ||
+          localStorage.getItem("username") ||
+          (currentUser && currentUser.username) ||
+          "Faculty";
+
+        facultyName.textContent = name;
+      }
+
+      /* ===============================
+         TOTAL STUDENTS
+      =============================== */
+
+      async function loadStudentCount() {
+        const totalStudents = document.getElementById("totalStudents");
+
+        try {
+          const response = await fetch("http://127.0.0.1:5000/api/students/");
+
+          if (!response.ok) {
+            throw new Error("Unable to load students");
+          }
+
+          const data = await response.json();
+
+          totalStudents.textContent = Array.isArray(data) ? data.length : 0;
+        } catch (error) {
+          console.error("Student count error:", error);
+
+          totalStudents.textContent = "0";
+        }
+      }
+
+      /* ===============================
+         ANNOUNCEMENTS
+      =============================== */
+
+      async function loadAnnouncements() {
+        const announcements = document.getElementById("announcements");
+
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:5000/api/announcements/",
+          );
+
+          if (!response.ok) {
+            throw new Error("Unable to load announcements");
+          }
+
+          const data = await response.json();
+
+          if (!Array.isArray(data) || data.length === 0) {
+            announcements.innerHTML = `
+              <div class="no-announcements">
+                No announcements available.
+              </div>
+            `;
+
+            return;
+          }
+
+          announcements.innerHTML = "";
+
+          data.forEach(function (announcement) {
+            const item = document.createElement("div");
+
+            item.className = "announcement-item";
+
+            const title = document.createElement("h3");
+
+            title.className = "announcement-title";
+
+            title.textContent = announcement.title || "Announcement";
+
+            const message = document.createElement("p");
+
+            message.className = "announcement-message";
+
+            message.textContent = announcement.message || "";
+
+            item.appendChild(title);
+
+            item.appendChild(message);
+
+            announcements.appendChild(item);
+          });
+        } catch (error) {
+          console.error("Announcements error:", error);
+
+          announcements.innerHTML = `
+            <div class="no-announcements">
+              No announcements available.
+            </div>
+          `;
+        }
+      }
+
+      /* ===============================
+         LOGOUT
+      =============================== */
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+
+        localStorage.removeItem("userRole");
+
+        localStorage.removeItem("username");
+
+        localStorage.removeItem("facultyName");
+
+        localStorage.removeItem("userEmail");
+
+        localStorage.removeItem("adminName");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      /* ===============================
+         PAGE LOAD
+      =============================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadFacultyName();
+        loadStudentCount();
+        loadAnnouncements();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Profile | Faculty Panel</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #0f1020;
+        color: #ffffff;
+      }
+
+      /* =========================
+       TOP NAVIGATION
+    ========================== */
+
+      .header {
+        width: 100%;
+        height: 72px;
+        background: #17182b;
+        border-bottom: 1px solid #34354d;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 32px;
+
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .brand {
+        color: #c084fc;
+        font-size: 21px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .nav a {
+        color: #d1d5db;
+        text-decoration: none;
+
+        padding: 10px 13px;
+
+        border-radius: 8px;
+
+        font-size: 14px;
+
+        transition: all 0.2s ease;
+      }
+
+      .nav a:hover {
+        background: #251c3d;
+        color: #c084fc;
+      }
+
+      .nav a.active {
+        background: #7c3aed;
+        color: #ffffff;
+
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+      }
+
+      .logout {
+        border: 1px solid #4c2a78;
+      }
+
+      .logout:hover {
+        background: #7c3aed !important;
+        color: white !important;
+      }
+
+      /* =========================
+       MAIN CONTENT
+    ========================== */
+
+      .main {
+        max-width: 1150px;
+
+        margin: 0 auto;
+
+        padding: 38px 35px;
+      }
+
+      .page-heading {
+        margin-bottom: 28px;
+      }
+
+      .page-heading h1 {
+        font-size: 30px;
+
+        margin-bottom: 8px;
+
+        color: #ffffff;
+      }
+
+      .page-heading p {
+        color: #8f91a8;
+
+        font-size: 14px;
+      }
+
+      /* =========================
+       PROFILE CARD
+    ========================== */
+
+      .profile-card {
+        max-width: 900px;
+
+        background: #17182b;
+
+        border: 1px solid #34354d;
+
+        border-radius: 16px;
+
+        padding: 32px;
+
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      /* =========================
+       PROFILE HEADER
+    ========================== */
+
+      .profile-header {
+        text-align: center;
+
+        padding-bottom: 30px;
+
+        margin-bottom: 25px;
+
+        border-bottom: 1px solid #292a40;
+      }
+
+      .profile-icon {
+        width: 95px;
+        height: 95px;
+
+        margin: 0 auto 16px;
+
+        border-radius: 50%;
+
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 38px;
+
+        font-weight: bold;
+
+        color: white;
+
+        border: 3px solid #c084fc;
+
+        box-shadow: 0 0 25px rgba(124, 58, 237, 0.35);
+      }
+
+      .profile-header h2 {
+        color: #c084fc;
+
+        font-size: 24px;
+
+        margin-bottom: 7px;
+      }
+
+      .profile-header p {
+        color: #8f91a8;
+
+        font-size: 14px;
+      }
+
+      /* =========================
+       DETAILS GRID
+    ========================== */
+
+      .details {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 18px;
+      }
+
+      .detail-card {
+        background: #101120;
+
+        border: 1px solid #34354d;
+
+        border-radius: 11px;
+
+        padding: 18px;
+
+        transition: 0.2s;
+      }
+
+      .detail-card:hover {
+        border-color: #7c3aed;
+
+        transform: translateY(-2px);
+      }
+
+      .detail-label {
+        color: #77798e;
+
+        font-size: 12px;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+
+        font-weight: bold;
+
+        margin-bottom: 9px;
+      }
+
+      .detail-value {
+        color: #e5e7eb;
+
+        font-size: 16px;
+
+        font-weight: 600;
+      }
+
+      .active-status {
+        color: #c084fc;
+      }
+
+      /* =========================
+       MOBILE INPUT
+    ========================== */
+
+      .mobile-input {
+        width: 100%;
+
+        padding: 11px 12px;
+
+        background: #17182b;
+
+        color: #ffffff;
+
+        border: 1px solid #34354d;
+
+        border-radius: 7px;
+
+        font-size: 15px;
+
+        outline: none;
+      }
+
+      .mobile-input::placeholder {
+        color: #77798e;
+      }
+
+      .mobile-input:focus {
+        border-color: #8b5cf6;
+
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+      }
+
+      /* =========================
+       BUTTONS
+    ========================== */
+
+      .button-area {
+        margin-top: 25px;
+
+        display: flex;
+
+        gap: 12px;
+      }
+
+      button {
+        padding: 12px 22px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #7c3aed;
+
+        color: white;
+
+        font-size: 14px;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #8b5cf6;
+
+        transform: translateY(-1px);
+
+        box-shadow: 0 5px 18px rgba(124, 58, 237, 0.25);
+      }
+
+      .logout-btn {
+        background: transparent;
+
+        border: 1px solid #7c3aed;
+      }
+
+      .logout-btn:hover {
+        background: #7c3aed;
+      }
+
+      /* =========================
+       FOOTER
+    ========================== */
+
+      footer {
+        text-align: center;
+
+        padding: 20px;
+
+        color: #77798e;
+
+        font-size: 12px;
+      }
+
+      /* =========================
+       RESPONSIVE
+    ========================== */
+
+      @media (max-width: 950px) {
+        .header {
+          height: auto;
+
+          padding: 16px 22px;
+
+          flex-direction: column;
+
+          align-items: flex-start;
+
+          gap: 14px;
+        }
+
+        .nav {
+          flex-wrap: wrap;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .main {
+          padding: 25px 18px;
+        }
+
+        .details {
+          grid-template-columns: 1fr;
+        }
+
+        .button-area {
+          flex-direction: column;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =========================
+       TOP HEADER
+  ========================== -->
+
+    <header class="header">
+      <div class="brand">Student Management System</div>
+
+      <nav class="nav">
+        <a href="index.html" id="dashboardLink"> 🏠 Dashboard </a>
+
+        <a href="my-students.html"> 👨‍🎓 Students </a>
+
+        <a href="attendance.html"> 📋 Attendance </a>
+
+        <a href="marks.html"> 📊 Marks </a>
+
+        <a href="profile.html" class="active"> 👤 Profile </a>
+
+        <a
+          href="login.html"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+
+    <main class="main">
+      <div class="page-heading">
+        <h1>My Profile</h1>
+
+        <p id="profileDescription">View your account information</p>
+      </div>
+
+      <!-- PROFILE CARD -->
+
+      <div class="profile-card">
+        <!-- PROFILE HEADER -->
+
+        <div class="profile-header">
+          <div class="profile-icon" id="profileIcon">F</div>
+
+          <h2 id="profileName">Faculty User</h2>
+
+          <p id="profileAccountType">Faculty Account</p>
+        </div>
+
+        <!-- DETAILS -->
+
+        <div class="details">
+          <!-- FULL NAME -->
+
+          <div class="detail-card">
+            <div class="detail-label">Full Name</div>
+
+            <div class="detail-value" id="fullName">Faculty User</div>
+          </div>
+
+          <!-- USERNAME -->
+
+          <div class="detail-card">
+            <div class="detail-label">Username</div>
+
+            <div class="detail-value" id="username">faculty1</div>
+          </div>
+
+          <!-- EMAIL -->
+
+          <div class="detail-card">
+            <div class="detail-label">Email</div>
+
+            <div class="detail-value" id="email">Faculty Email</div>
+          </div>
+
+          <!-- ROLE -->
+
+          <div class="detail-card">
+            <div class="detail-label">Role</div>
+
+            <div class="detail-value" id="roleValue">Faculty</div>
+          </div>
+
+          <!-- ACCOUNT STATUS -->
+
+          <div class="detail-card">
+            <div class="detail-label">Account Status</div>
+
+            <div class="detail-value active-status">● Active</div>
+          </div>
+
+          <!-- MOBILE NUMBER -->
+
+          <div class="detail-card">
+            <div class="detail-label">Mobile Number</div>
+
+            <input
+              type="tel"
+              id="mobileNumber"
+              class="mobile-input"
+              placeholder="Enter Mobile Number"
+              maxlength="10"
+              inputmode="numeric"
+              autocomplete="tel"
+            />
+          </div>
+        </div>
+
+        <!-- BUTTONS -->
+
+        <div class="button-area">
+          <button onclick="saveMobileNumber()">Save Mobile Number</button>
+
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>© 2026 Student Management System</footer>
+
+    <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+    <script>
+      /* ===============================
+       CURRENT USER / ROLE
+    =============================== */
+
+      let currentUser = null;
+
+      try {
+        currentUser = JSON.parse(localStorage.getItem("user") || "null");
+      } catch (error) {
+        currentUser = null;
+      }
+
+      const currentRole = String(
+        (currentUser && currentUser.role) ||
+          localStorage.getItem("userRole") ||
+          "",
+      )
+        .trim()
+        .toLowerCase();
+
+      const isAdmin = currentRole === "admin";
+      const isFaculty = currentRole === "faculty";
+
+      /* ===============================
+       ROLE-BASED DASHBOARD LINK
+    =============================== */
+
+      const dashboardLink = document.getElementById("dashboardLink");
+
+      if (dashboardLink) {
+        if (isAdmin) {
+          dashboardLink.href = "index.html";
+        } else if (isFaculty) {
+          dashboardLink.href = "faculty-dashboard.html";
+        } else {
+          dashboardLink.href = "login.html";
+        }
+      }
+
+      /* ===============================
+       PROFILE DETAILS
+    =============================== */
+
+      const savedUsername =
+        localStorage.getItem("username") ||
+        (currentUser && currentUser.username) ||
+        "";
+
+      const savedEmail =
+        localStorage.getItem("userEmail") ||
+        (currentUser && currentUser.email) ||
+        "";
+
+      const displayUsername =
+        savedUsername || (isAdmin ? "Admin" : "Faculty User");
+
+      const displayEmail =
+        savedEmail || (isAdmin ? "Admin Email" : "Faculty Email");
+
+      const displayRole = isAdmin ? "Admin" : "Faculty";
+
+      document.getElementById("profileName").textContent = displayUsername;
+
+      document.getElementById("fullName").textContent = displayUsername;
+
+      document.getElementById("username").textContent = displayUsername;
+
+      document.getElementById("email").textContent = displayEmail;
+
+      document.getElementById("roleValue").textContent = displayRole;
+
+      document.getElementById("profileIcon").textContent =
+        displayUsername.charAt(0).toUpperCase() || "U";
+
+      document.getElementById("profileAccountType").textContent =
+        displayRole + " Account";
+
+      document.getElementById("profileDescription").textContent =
+        "View your " + displayRole.toLowerCase() + " account information";
+
+      /* ===============================
+       MOBILE NUMBER
+    =============================== */
+
+      const mobileInput = document.getElementById("mobileNumber");
+
+      mobileInput.value = localStorage.getItem("mobileNumber") || "";
+
+      mobileInput.addEventListener("input", function () {
+        this.value = this.value.replace(/[^0-9]/g, "").slice(0, 10);
+      });
+
+      /* ===============================
+       SAVE MOBILE NUMBER
+    =============================== */
+
+      function saveMobileNumber() {
+        const mobile = mobileInput.value.trim();
+
+        if (mobile.length !== 10) {
+          alert("Please enter a valid 10-digit mobile number.");
+
+          mobileInput.focus();
+
+          return;
+        }
+
+        localStorage.setItem("mobileNumber", mobile);
+
+        alert("Mobile number saved successfully.");
+      }
+
+      /* ===============================
+       LOGOUT
+    =============================== */
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+
+        localStorage.removeItem("userRole");
+
+        localStorage.removeItem("facultyName");
+
+        localStorage.removeItem("username");
+
+        localStorage.removeItem("userEmail");
+
+        localStorage.removeItem("adminName");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

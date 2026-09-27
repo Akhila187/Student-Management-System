@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Students Records | Faculty Panel</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      #studentSearch {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 18px;
+        margin: 0 0 25px 0;
+        background: #1e1b2e;
+        color: #ffffff;
+        border: 1px solid #3d3654;
+        border-radius: 8px;
+        outline: none;
+        font-size: 15px;
+      }
+
+      #studentSearch::placeholder {
+        color: #aaa;
+      }
+
+      #studentSearch:focus {
+        border-color: #8b5cf6;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Student Management System</h1>
+
+      <nav>
+        <a href="faculty-dashboard.html">🏠 Dashboard</a>
+        <a href="my-students.html" class="active">👨‍🎓 Students</a>
+        <a href="attendance.html">📋 Attendance</a>
+        <a href="marks.html">📊 Marks</a>
+        <a href="profile.html">👤 Profile</a>
+
+        <a
+          href="#"
+          class="logout"
+          onclick="
+            logout();
+            return false;
+          "
+        >
+          🚪 Logout
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- PAGE HEADING -->
+      <section class="welcome">
+        <h2>Students Records</h2>
+        <p>View student information and academic details.</p>
+      </section>
+
+      <!-- SEARCH BAR -->
+      <section>
+        <input
+          type="text"
+          id="studentSearch"
+          placeholder="Search students by name, email, department..."
+          onkeyup="filterStudents()"
+        />
+      </section>
+
+      <!-- STUDENT RECORDS -->
+      <section class="quick-actions">
+        <h2>Students Records</h2>
+
+        <div id="studentsList">
+          <p>Loading student records...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Student Management System</p>
+    </footer>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000";
+
+      /* =========================
+         FACULTY AUTHENTICATION
+      ========================= */
+
+      const storedRole = localStorage.getItem("userRole");
+      const storedUser = localStorage.getItem("user");
+
+      let userData = null;
+
+      try {
+        userData = storedUser ? JSON.parse(storedUser) : null;
+      } catch (error) {
+        userData = null;
+      }
+
+      const actualRole = storedRole || (userData && userData.role) || "";
+
+      if (String(actualRole).toLowerCase() !== "faculty") {
+        window.location.replace("login.html");
+      }
+
+      let studentsData = [];
+
+      /* =========================
+         LOAD STUDENTS
+      ========================= */
+
+      async function loadStudents() {
+        const studentsList = document.getElementById("studentsList");
+
+        try {
+          const response = await fetch(API_URL + "/api/students/");
+
+          if (!response.ok) {
+            throw new Error("Failed to load students");
+          }
+
+          studentsData = await response.json();
+
+          displayStudents(studentsData);
+        } catch (error) {
+          console.error(error);
+
+          studentsList.innerHTML = "<p>Unable to load student records.</p>";
+        }
+      }
+
+      /* =========================
+         DISPLAY STUDENTS
+      ========================= */
+
+      function displayStudents(students) {
+        const studentsList = document.getElementById("studentsList");
+
+        if (!students || students.length === 0) {
+          studentsList.innerHTML = "<p>No student records found.</p>";
+
+          return;
+        }
+
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Date of Birth</th>
+              </tr>
+            </thead>
+
+            <tbody>
+        `;
+
+        students.forEach((student) => {
+          html += `
+            <tr>
+              <td>${student.id ?? ""}</td>
+              <td>${student.name ?? ""}</td>
+              <td>${student.email ?? ""}</td>
+              <td>${student.phone ?? ""}</td>
+              <td>${student.department ?? ""}</td>
+              <td>${student.year ?? ""}</td>
+              <td>${student.dob ?? ""}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+            </tbody>
+          </table>
+        `;
+
+        studentsList.innerHTML = html;
+      }
+
+      /* =========================
+         SEARCH STUDENTS
+      ========================= */
+
+      function filterStudents() {
+        const search = document
+          .getElementById("studentSearch")
+          .value.toLowerCase()
+          .trim();
+
+        const filtered = studentsData.filter(
+          (student) =>
+            String(student.id ?? "")
+              .toLowerCase()
+              .includes(search) ||
+            String(student.name ?? "")
+              .toLowerCase()
+              .includes(search) ||
+            String(student.email ?? "")
+              .toLowerCase()
+              .includes(search) ||
+            String(student.phone ?? "")
+              .toLowerCase()
+              .includes(search) ||
+            String(student.department ?? "")
+              .toLowerCase()
+              .includes(search) ||
+            String(student.year ?? "")
+              .toLowerCase()
+              .includes(search),
+        );
+
+        displayStudents(filtered);
+      }
+
+      /* =========================
+         LOGOUT
+      ========================= */
+
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("username");
+        localStorage.removeItem("facultyName");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("adminName");
+        localStorage.removeItem("user");
+
+        window.location.href = "login.html";
+      }
+
+      /* =========================
+         LOAD DATA WHEN PAGE OPENS
+      ========================= */
+
+      document.addEventListener("DOMContentLoaded", loadStudents);
+    </script>
+  </body>
+</html>
